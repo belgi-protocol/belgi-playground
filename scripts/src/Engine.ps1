@@ -45,10 +45,14 @@ function Get-RelativePathFailClosed {
   $fromFull = (Resolve-Path -LiteralPath $FromDir).Path.TrimEnd([char]'\',[char]'/')
   $toFull = (Resolve-Path -LiteralPath $ToPath).Path.TrimEnd([char]'\',[char]'/')
 
-  $fromQual = (Split-Path -Qualifier $fromFull)
-  $toQual = (Split-Path -Qualifier $toFull)
-  if ($fromQual -and $toQual -and ($fromQual.ToLowerInvariant() -ne $toQual.ToLowerInvariant())) {
-    throw "Fail-closed: unable to compute a drive-qualified-free relative path from '$FromDir' to '$ToPath'. Ensure the repo and venv are on the same drive."
+  # On Windows, ensure we don't cross drives (would force drive-qualified paths).
+  # On macOS/Linux, Split-Path -Qualifier is not applicable and will error.
+  if ($env:OS -eq 'Windows_NT') {
+    $fromQual = (Split-Path -Qualifier $fromFull)
+    $toQual = (Split-Path -Qualifier $toFull)
+    if ($fromQual -and $toQual -and ($fromQual.ToLowerInvariant() -ne $toQual.ToLowerInvariant())) {
+      throw "Fail-closed: unable to compute a drive-qualified-free relative path from '$FromDir' to '$ToPath'. Ensure the repo and venv are on the same drive."
+    }
   }
 
   $fromParts = ($fromFull -split '[\\/]+')
