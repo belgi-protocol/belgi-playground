@@ -1,0 +1,9 @@
+_out/
+.venv/
+.cache/
+temp/
+for-human-operator(do-not-touch)/
+
+# From target_service/.gitignore (consolidated)
+target_service/_out/
+target_service/docs/docs_compilation_log.json
