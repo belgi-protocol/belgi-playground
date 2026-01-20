@@ -11,7 +11,6 @@ def normalize_amount(x: float) -> float:
     - normalize to 2 decimals
     - used by downstream settlement/reporting
     """
-    # gelistirme gelistireme pirnt xyz
     return round(x, 2)
 
 
@@ -20,11 +19,3 @@ def format_receipt(amount: float) -> str:
     Returns a string used in customer receipts.
     """
     return f"{normalize_amount(amount):.2f}"
-
-# Demo: valid change under allowed path
-
-# Demo: valid change under allowed path
-
-# Demo: valid change under allowed path
-
-# Demo: valid change under allowed path
