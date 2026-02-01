@@ -1,4 +1,4 @@
-﻿# Intent
+# Intent
 ```yaml
 intent_id: "intent-q-pass-tier0"
 title: "Fixture intent"

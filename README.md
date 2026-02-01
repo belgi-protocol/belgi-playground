@@ -61,8 +61,10 @@ The protocol definitions, gate logic, and schemas belong to the engine repo — 
 
 ### Prerequisites
 - Git
-- Python 3.13+
+- Python 3.10–3.13
 - PowerShell 7 (`pwsh`) (required on macOS/Linux)
+
+**Compatibility:** The demo harness is validated on Python 3.10–3.13. Other versions are not guaranteed.
 
 ### Windows
 
@@ -116,6 +118,20 @@ Type `demo` to start the guided walkthrough.
 
 ```cmd
 .\scripts\run_chain.cmd -Auto -ForceCleanRun
+```
+
+### Smoke test (non-interactive)
+
+Windows:
+
+```cmd
+.\scripts\wrappers\smoke_test.cmd
+```
+
+macOS / Linux:
+
+```bash
+./scripts/wrappers/smoke_test.sh
 ```
 
 ### Output location
