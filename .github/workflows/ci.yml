@@ -1,0 +1,65 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  repro:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10", "3.11", "3.12", "3.13"]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Fix Node PATH (act only)
+        if: env.ACT == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          for d in /opt/acttoolcache/node/*/*/bin; do
+            echo "$d" >> "$GITHUB_PATH"
+            export PATH="$d:$PATH"
+          done
+          node -v
+
+      - name: Normalize git settings
+        run: git config --global core.autocrlf false
+
+      - name: Install PowerShell (act only)
+        if: env.ACT == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          apt-get update
+          apt-get install -y curl ca-certificates gnupg apt-transport-https
+          . /etc/os-release
+          curl -fsSL "https://packages.microsoft.com/config/ubuntu/${VERSION_ID}/packages-microsoft-prod.deb" -o /tmp/packages-microsoft-prod.deb
+          dpkg -i /tmp/packages-microsoft-prod.deb
+          apt-get update
+          apt-get install -y powershell
+          pwsh -v
+
+      - name: Trust workspace for git (act only)
+        if: env.ACT == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          git config --global --add safe.directory "$GITHUB_WORKSPACE/target_service"
+
+      - name: Repro determinism test
+        run: pwsh -NoProfile -File scripts/repro_test.ps1

@@ -23,7 +23,7 @@ This is the detailed walkthrough and reference for running the BELGI demo harnes
 ### Prerequisites
 
 - Git
-- Python 3.13+
+- Python 3.10–3.13
 - Windows (primary), or Unix with PowerShell Core
 
 ### Bootstrap

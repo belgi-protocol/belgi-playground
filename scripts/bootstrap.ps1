@@ -99,12 +99,15 @@ foreach ($relPath in $requiredPaths) {
 Write-Host "Setting up Python venv..." -ForegroundColor Cyan
 
 function Get-PythonBootstrap {
-  $minVersionCheck = "import sys; sys.exit(0 if sys.version_info >= (3,13) else 1)"
+  $minVersionCheck = "import sys; sys.exit(0 if sys.version_info >= (3,10) else 1)"
   try { & py -3.13 -c $minVersionCheck 2>$null | Out-Null; if ($LASTEXITCODE -eq 0) { return @{Exe='py'; Args=@('-3.13')} } } catch {}
+  try { & py -3.12 -c $minVersionCheck 2>$null | Out-Null; if ($LASTEXITCODE -eq 0) { return @{Exe='py'; Args=@('-3.12')} } } catch {}
+  try { & py -3.11 -c $minVersionCheck 2>$null | Out-Null; if ($LASTEXITCODE -eq 0) { return @{Exe='py'; Args=@('-3.11')} } } catch {}
+  try { & py -3.10 -c $minVersionCheck 2>$null | Out-Null; if ($LASTEXITCODE -eq 0) { return @{Exe='py'; Args=@('-3.10')} } } catch {}
   try { & py -3 -c $minVersionCheck 2>$null | Out-Null; if ($LASTEXITCODE -eq 0) { return @{Exe='py'; Args=@('-3')} } } catch {}
   try { & python3 -c $minVersionCheck 2>$null | Out-Null; if ($LASTEXITCODE -eq 0) { return @{Exe='python3'; Args=@()} } } catch {}
   try { & python -c $minVersionCheck 2>$null | Out-Null; if ($LASTEXITCODE -eq 0) { return @{Exe='python'; Args=@()} } } catch {}
-  throw 'Python not found (or < 3.13). Install Python 3.13+ and ensure python3/python is on PATH.'
+  throw 'Python not found (or < 3.10). Install Python 3.10+ and ensure python3/python is on PATH.'
 }
 
 $py = Get-PythonBootstrap
@@ -188,6 +191,7 @@ Write-Host "  IntentSpec.core.md (scope updated)" -ForegroundColor Green
 $tolerancesSrc = $null
 $tolCandidates = @(
   'policy/fixtures/public/gate_q/q_pass_tier0/tolerances.json',
+  'policy/fixtures/public/seal/s_pass_tier2/tolerances.json',
   'policy/templates/tolerances.json'
 )
 foreach ($candidate in $tolCandidates) {
@@ -195,18 +199,27 @@ foreach ($candidate in $tolCandidates) {
   if (Test-Path $fullPath) { $tolerancesSrc = $fullPath; break }
 }
 if (-not $tolerancesSrc) {
-  $tolSearch = Get-ChildItem -Path $cacheFullPath -Recurse -Filter 'tolerances.json' -ErrorAction SilentlyContinue | Select-Object -First 1
-  if ($tolSearch) { $tolerancesSrc = $tolSearch.FullName }
+  $tolSearch = Get-ChildItem -Path $cacheFullPath -Recurse -Filter 'tolerances.json' -ErrorAction SilentlyContinue |
+    Sort-Object -Property FullName
+  $preferred = $tolSearch | Where-Object { $_.FullName -match [regex]::Escape([IO.Path]::Combine('policy','fixtures','public','seal','s_pass_tier2','tolerances.json')) } | Select-Object -First 1
+  if ($preferred) {
+    $tolerancesSrc = $preferred.FullName
+  } else {
+    $first = $tolSearch | Select-Object -First 1
+    if ($first) { $tolerancesSrc = $first.FullName }
+  }
 }
 if (-not $tolerancesSrc) { throw 'No tolerances.json found in BELGI checkout' }
 
 Copy-Item -Path $tolerancesSrc -Destination (Join-Path $demoSpecsDir 'tolerances.json') -Force
+Write-Host "    (from: $([IO.Path]::GetRelativePath($cacheFullPath, $tolerancesSrc)))" -ForegroundColor DarkGray
 Write-Host "  tolerances.json" -ForegroundColor Green
 
 # Copy toolchain.json
 $toolchainSrc = $null
 $tcCandidates = @(
   'policy/fixtures/public/gate_q/q_pass_tier0/toolchain.json',
+  'policy/fixtures/public/seal/s_pass_tier2/toolchain.json',
   'policy/templates/toolchain.json'
 )
 foreach ($candidate in $tcCandidates) {
@@ -214,12 +227,20 @@ foreach ($candidate in $tcCandidates) {
   if (Test-Path $fullPath) { $toolchainSrc = $fullPath; break }
 }
 if (-not $toolchainSrc) {
-  $tcSearch = Get-ChildItem -Path $cacheFullPath -Recurse -Filter 'toolchain.json' -ErrorAction SilentlyContinue | Select-Object -First 1
-  if ($tcSearch) { $toolchainSrc = $tcSearch.FullName }
+  $tcSearch = Get-ChildItem -Path $cacheFullPath -Recurse -Filter 'toolchain.json' -ErrorAction SilentlyContinue |
+    Sort-Object -Property FullName
+  $preferred = $tcSearch | Where-Object { $_.FullName -match [regex]::Escape([IO.Path]::Combine('policy','fixtures','public','seal','s_pass_tier2','toolchain.json')) } | Select-Object -First 1
+  if ($preferred) {
+    $toolchainSrc = $preferred.FullName
+  } else {
+    $first = $tcSearch | Select-Object -First 1
+    if ($first) { $toolchainSrc = $first.FullName }
+  }
 }
 if (-not $toolchainSrc) { throw 'No toolchain.json found in BELGI checkout' }
 
 Copy-Item -Path $toolchainSrc -Destination (Join-Path $demoSpecsDir 'toolchain.json') -Force
+Write-Host "    (from: $([IO.Path]::GetRelativePath($cacheFullPath, $toolchainSrc)))" -ForegroundColor DarkGray
 Write-Host "  toolchain.json" -ForegroundColor Green
 
 Write-Host ""

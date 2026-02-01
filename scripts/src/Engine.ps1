@@ -94,10 +94,14 @@ function Resolve-PythonCommand {
     return (Convert-PosixPathToNative '../.venv/bin/python')
   }
 
-  try { & py -3.13 -c "print(1)" 2>$null | Out-Null; if ($LASTEXITCODE -eq 0) { return 'py -3.13' } } catch {}
-  try { & py -3 -c "print(1)" 2>$null | Out-Null; if ($LASTEXITCODE -eq 0) { return 'py -3' } } catch {}
-  try { & python3 -c "print(1)" 2>$null | Out-Null; if ($LASTEXITCODE -eq 0) { return 'python3' } } catch {}
-  try { & python -c "print(1)" 2>$null | Out-Null; if ($LASTEXITCODE -eq 0) { return 'python' } } catch {}
+  $minVersionCheck = "import sys; sys.exit(0 if sys.version_info >= (3,10) else 1)"
+  try { & py -3.13 -c $minVersionCheck 2>$null | Out-Null; if ($LASTEXITCODE -eq 0) { return 'py -3.13' } } catch {}
+  try { & py -3.12 -c $minVersionCheck 2>$null | Out-Null; if ($LASTEXITCODE -eq 0) { return 'py -3.12' } } catch {}
+  try { & py -3.11 -c $minVersionCheck 2>$null | Out-Null; if ($LASTEXITCODE -eq 0) { return 'py -3.11' } } catch {}
+  try { & py -3.10 -c $minVersionCheck 2>$null | Out-Null; if ($LASTEXITCODE -eq 0) { return 'py -3.10' } } catch {}
+  try { & py -3 -c $minVersionCheck 2>$null | Out-Null; if ($LASTEXITCODE -eq 0) { return 'py -3' } } catch {}
+  try { & python3 -c $minVersionCheck 2>$null | Out-Null; if ($LASTEXITCODE -eq 0) { return 'python3' } } catch {}
+  try { & python -c $minVersionCheck 2>$null | Out-Null; if ($LASTEXITCODE -eq 0) { return 'python' } } catch {}
   throw 'No Python found. Run scripts/bootstrap.ps1 first (it creates .venv).'
 }
 
