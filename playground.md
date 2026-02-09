@@ -64,6 +64,8 @@ The `demo` command runs 4 parts. Each part demonstrates a specific failure mode 
    Change: "max_loc_delta": 500 → "max_loc_delta": 9999
    ```
 
+Example run stamp (docs only): `bk_ycanary_demo_5e2ad0c1`
+
 4. **Q re-runs.** Gate Q detects the mismatch and returns **NO-GO**.
 
 5. **Recovery.** Re-run C1 to regenerate LockedSpec from intent.

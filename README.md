@@ -138,6 +138,8 @@ macOS / Linux:
 
 All artifacts land in: `target_service/_out/run_<timestamp>/`
 
+Example run stamp used in docs: `bk_ycanary_demo_5e2ad0c1`
+
 ---
 
 ## Demo walkthrough (interactive)
