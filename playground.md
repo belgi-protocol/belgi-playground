@@ -3,7 +3,8 @@
 This is the detailed walkthrough and reference for running the BELGI demo harness.
 
 > **Reminder:** This is a demo harness, not the BELGI protocol engine.
-> For canonical protocol definitions, see the engine repo pinned in `pins/belgi_repo_url.txt`.
+> It currently targets BELGI's archived pre-reset implementation line pinned in `pins/`.
+> For current BELGI semantics and implementation direction, use the successor BELGI line, not this demo harness.
 
 ---
 
@@ -20,6 +21,10 @@ This is the detailed walkthrough and reference for running the BELGI demo harnes
 
 ## Before you start
 
+If you want a passive walkthrough, check this repo's releases for a recorded
+demo video when one is attached. That recording reflects the pinned archived
+BELGI line this playground currently targets.
+
 ### Prerequisites
 
 - Git
@@ -33,6 +38,8 @@ This is the detailed walkthrough and reference for running the BELGI demo harnes
 ```
 
 This clones the pinned BELGI engine version into `.cache/belgi/`.
+That pinned version currently belongs to BELGI's archived pre-reset
+implementation line.
 
 ### Start the runner
 
@@ -163,7 +170,9 @@ Example run stamp (docs only): `bk_ycanary_demo_5e2ad0c1`
 | Add whitespace to sealed artifact | S | NO-GO | Any byte change breaks hash | Re-run seal |
 | Edit field no gate binds | **All gates** | **May pass** | Limitation: not all fields hash-bound | None — known gap |
 
-**Limitation:** Not every field in every artifact is hash-bound by a gate. Editing such a field may pass all gates. This is a protocol limitation documented in the engine repo.
+**Limitation:** Not every field in every artifact is hash-bound by a gate.
+Editing such a field may pass all gates. This is a limitation of the pinned
+archived engine line documented in that engine repo.
 
 ---
 
