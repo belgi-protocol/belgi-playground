@@ -2,6 +2,7 @@
 
 > **This repo is a demo harness, not the BELGI protocol engine.**
 > It demonstrates mechanics and failure modes — it does not prove general security.
+> It currently points at BELGI's archived pre-reset implementation line, not the active successor line.
 
 ---
 
@@ -24,20 +25,39 @@ A local, interactive demo harness for running a BELGI chain against a sample gov
 
 ---
 
+## Current posture
+
+This repository currently demonstrates a BELGI engine pin that resolves to the
+archived pre-reset BELGI implementation line.
+
+That means:
+
+- this playground is a demo against an archived BELGI line
+- it does not track the active successor rebuild
+- it should not be read as the current normative BELGI posture
+
+This playground may later be archived as well, or retained as a historical demo
+harness. Either way, its current value is historical and instructional, not
+normative.
+
+---
+
 ## What this repo is not
 
 - **Not the BELGI protocol engine.** The engine is a separate project; this repo merely consumes it.
 - **Not the authoritative source** for schemas, templates, or gate semantics.
+- **Not a view into active BELGI.** The pinned engine line is archived, and the successor BELGI work is elsewhere.
 - **Not a security product.** It is a walkthrough harness for learning BELGI mechanics.
 - **Not trustless.** If you control the runner, you can fabricate artifacts. The value is making tampering *detectable*, not *impossible*.
 
 ---
 
-## Where the real protocol lives
+## Where the pinned protocol line lives
 
-All canonical schemas, gate semantics, and tooling live in the **BELGI engine repo** (source of truth).
+This playground pins a specific BELGI engine version. That pin currently points
+to BELGI's archived pre-reset implementation line.
 
-This playground pins a specific engine version. To find the engine source:
+To find the pinned engine source:
 
 ```cmd
 Get-Content pins\belgi_repo_url.txt   # repo URL
@@ -51,13 +71,24 @@ cat pins/belgi_repo_url.txt   # repo URL
 cat pins/belgi_ref.txt        # commit SHA
 ```
 
-The local `.cache/belgi/` directory is a clone of that pinned version, used by the harness to run gates. It is **not** the source of truth — the engine repo is.
+The local `.cache/belgi/` directory is a clone of that pinned version, used by
+the harness to run gates. It is **not** authoritative by itself.
 
-The protocol definitions, gate logic, and schemas belong to the engine repo — not this playground.
+For the behavior exercised by this harness, the pinned archived BELGI repo is
+the reference line. It is still not the active normative BELGI line.
+
+For current BELGI semantics, architecture, and implementation direction, use
+the successor BELGI line and the stabilized specification family, not this
+playground and not the archived engine pin it consumes.
 
 ---
 
 ## Quickstart
+
+If you want a passive walkthrough instead of running the harness, check this
+repo's releases for a recorded demo video when one is attached. That video
+shows the pinned archived BELGI line this playground currently targets, not the
+active successor BELGI line.
 
 ### Prerequisites
 - Git
@@ -235,9 +266,10 @@ Non-intent-derived integrity is caught by Gate R (evidence hashes) or Gate S (se
 
 ### 3. `produced_by` quirks
 
-Some artifacts are recorded as `produced_by=C1` due to engine schema allowlists.
+Some artifacts are recorded as `produced_by=C1` due to schema allowlists in the
+pinned engine line.
 
-This is a **known constraint** in the current engine, not "gaming" — it's tracked as an upstream engine issue.
+This is a **known constraint** in the pinned archived line, not "gaming".
 
 ### 4. Path prefixes depend on git root
 
@@ -272,7 +304,9 @@ The runner has built-in retry logic (up to 6 retries with backoff) for these err
 
 **Cause:** The harness stages protocol pack files into a sandbox for C3.
 
-**Recovery:** This is expected behavior for the demo. For canonical scope rules, see the BELGI engine repo.
+**Recovery:** This is expected behavior for the demo. For the scope rules this
+harness actually exercises, see the pinned archived BELGI engine repo, not this
+playground.
 
 ### Empty diff.patch
 
@@ -289,7 +323,7 @@ The runner has built-in retry logic (up to 6 retries with backoff) for these err
 | Runner trust | If you control `scripts/run_chain.ps1`, you can fabricate artifacts. |
 | Demo-only scaffolding | Protocol-pack staging, placeholder hashes, and timestamped dirs are demo conveniences. |
 | No external verifier | This repo doesn't provide a standalone verifier that works without the runner. |
-| Schema constraints | Some `produced_by` assignments exist to satisfy current allowlists, not ideal semantics. |
+| Schema constraints | Some `produced_by` assignments reflect the pinned archived engine line, not ideal semantics. |
 
 **What this demo proves:** Artifact structure and failure modes.
 
@@ -309,7 +343,9 @@ The runner has built-in retry logic (up to 6 retries with backoff) for these err
 | Edit EvidenceManifest after seal | S | ObjectRef hash mismatch | Re-run C3 → SEAL → S |
 | Edit field no gate binds | **May pass all gates** | Limitation: not all fields are hash-bound | None — this is a known gap |
 
-**Limitation:** If you edit a field that no gate explicitly binds (neither intent-derived nor hash-verified), tampering may pass undetected. This is a protocol limitation, not a harness bug.
+**Limitation:** If you edit a field that no gate explicitly binds (neither
+intent-derived nor hash-verified), tampering may pass undetected. This is a
+limitation of the pinned protocol line, not a harness bug.
 
 ---
 
@@ -336,5 +372,5 @@ Q is about deterministic semantic mapping from IntentSpec. Some integrity checks
 ## See also
 
 - [playground.md](playground.md) — Detailed playbook with narrated walkthrough
+- Releases — may include a recorded demo video for this harness
 - Engine source: see `pins/belgi_repo_url.txt` and `pins/belgi_ref.txt`
-
